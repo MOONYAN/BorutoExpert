@@ -24,6 +24,18 @@ namespace BorutoExpert
 
         private int MagicNumber = 1;
 
+        double UpperBollinger => iBands(Symbol(), PERIOD_M15, 12, 2, 0, PRICE_CLOSE, MODE_UPPER, 1);
+
+        double LowerBollinger => iBands(Symbol(), PERIOD_M15, 12, 2, 0, PRICE_CLOSE, MODE_LOWER, 1);
+
+        double SAR => iSAR(Symbol(), PERIOD_M15, 0.02, 0.2, 1);
+
+        double MA12 => iMA(Symbol(), PERIOD_M15, 12, 0, MODE_SMA, PRICE_CLOSE, 1);
+
+        double MA30 => iMA(Symbol(), PERIOD_M15, 30, 0, MODE_SMA, PRICE_CLOSE, 1);
+
+        double MA50 => iMA(Symbol(), PERIOD_M15, 50, 0, MODE_SMA, PRICE_CLOSE, 1);
+
         public override int start()
         {
             //Console.WriteLine("High[0]:" + High[0]);
