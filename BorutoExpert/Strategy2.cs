@@ -11,7 +11,7 @@ namespace BorutoExpert
     public class Strategy2 : NQuotes.MqlApi
     {
         [ExternVariable]
-        public double Lots = 0.01;
+        public double Lots = 0.1;
 
         [ExternVariable]
         public int Slippage = 30;
@@ -98,22 +98,44 @@ namespace BorutoExpert
 
         private bool IsMatchOpenBuyCondiction()
         {
-            return Close[1] > iBands(Symbol(), PERIOD_M15, 12, 2, 0, PRICE_CLOSE, MODE_UPPER, 1);
+            int power = 0;
+            if (SAR < Low[1]) power++;
+            if (UpperBollinger <= Close[1]) power++;
+            if (MA12 > MA30 && MA12 > MA50) power++;
+            if (Close[1] > MA12 && Close[1] > MA30 && Close[1] > MA50) power++;
+            return power >= 3;
         }
 
         private bool IsMatchOpenSellCondiction()
         {
-            return Close[1] < iBands(Symbol(), PERIOD_M15, 12, 2, 0, PRICE_CLOSE, MODE_LOWER, 1);
+            int power = 0;
+            if (SAR > High[1]) power++;
+            if (LowerBollinger >= Close[1]) power++;
+            if (MA12 < MA30 && MA12 < MA50) power++;
+            if (Close[1] < MA12 && Close[1] < MA30 && Close[1] < MA50) power++;
+            return power >= 3;
         }
 
         private bool IsMatchColseBuyCondiction()
         {
-            return High[1] <= iSAR(Symbol(), PERIOD_M15, 0.02, 0.2, 1);
+            int power = 0;
+            if (SAR > High[1]) power++;
+            if (LowerBollinger >= Low[1]) power++;
+            if (MA12 < MA30 && MA12 < MA50) power++;
+            if (Close[1] < MA30) power++;
+            if (Close[1] < MA50) power++;
+            return power >= 3;
         }
 
         private bool IsMatchColseSellCondiction()
         {
-            return Low[1] >= iSAR(Symbol(), PERIOD_M15, 0.02, 0.2, 1);
+            int power = 0;
+            if (SAR < Low[1]) power++;
+            if (UpperBollinger <= High[1]) power++;
+            if (MA12 > MA30 && MA12 > MA50) power++;
+            if (Close[1] > MA30) power++;
+            if (Close[1] > MA50) power++;
+            return power >= 3;
         }
 
         private void OpenBuyPosition()
