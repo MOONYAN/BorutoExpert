@@ -17,24 +17,26 @@ namespace BorutoExpert
         public int Slippage = 30;
 
         [ExternVariable]
-        public double StopLoss = 0;
+        public double StopLoss = 0.002;
 
         [ExternVariable]
-        public double TakeProfit = 0;
+        public double TakeProfit = 0.003;
 
         private int MagicNumber = 1;
 
-        double UpperBollinger => iBands(Symbol(), PERIOD_M15, 12, 2, 0, PRICE_CLOSE, MODE_UPPER, 1);
+        int Exponent => (int)MarketInfo(Symbol(),MODE_DIGITS);
 
-        double LowerBollinger => iBands(Symbol(), PERIOD_M15, 12, 2, 0, PRICE_CLOSE, MODE_LOWER, 1);
+        double UpperBollinger => iBands(Symbol(), PERIOD_M30, 12, 2, 0, PRICE_CLOSE, MODE_UPPER, 1);
 
-        double SAR => iSAR(Symbol(), PERIOD_M15, 0.02, 0.2, 1);
+        double LowerBollinger => iBands(Symbol(), PERIOD_M30, 12, 2, 0, PRICE_CLOSE, MODE_LOWER, 1);
 
-        double MA12 => iMA(Symbol(), PERIOD_M15, 12, 0, MODE_SMA, PRICE_CLOSE, 1);
+        double SAR => iSAR(Symbol(), PERIOD_M30, 0.02, 0.2, 1);
 
-        double MA30 => iMA(Symbol(), PERIOD_M15, 30, 0, MODE_SMA, PRICE_CLOSE, 1);
+        double MA12 => iMA(Symbol(), PERIOD_M30, 12, 0, MODE_SMA, PRICE_CLOSE, 1);
 
-        double MA50 => iMA(Symbol(), PERIOD_M15, 50, 0, MODE_SMA, PRICE_CLOSE, 1);
+        double MA30 => iMA(Symbol(), PERIOD_M30, 30, 0, MODE_SMA, PRICE_CLOSE, 1);
+
+        double MA50 => iMA(Symbol(), PERIOD_M30, 50, 0, MODE_SMA, PRICE_CLOSE, 1);
 
         public override int start()
         {
@@ -45,25 +47,25 @@ namespace BorutoExpert
 
             if (IsExistBuyPosition() && IsMatchColseBuyCondiction())
             {
-                Console.WriteLine("CloseBuyPosition");
+                //Console.WriteLine("CloseBuyPosition");
                 CloseBuyPosition();
             }
 
             if (!IsExistBuyPosition() && IsMatchOpenBuyCondiction())
             {
-                Console.WriteLine("OpenBuyPosition");
+                //Console.WriteLine("OpenBuyPosition");
                 OpenBuyPosition();
             }
 
             if (IsExistSellPosition() && IsMatchColseSellCondiction())
             {
-                Console.WriteLine("CloseSellPosition");
+                //Console.WriteLine("CloseSellPosition");
                 CloseSellPosition();
             }
 
             if (!IsExistSellPosition() && IsMatchOpenSellCondiction())
             {
-                Console.WriteLine("OpenSellPosition");
+                //Console.WriteLine("OpenSellPosition");
                 OpenSellPosition();
             }
 
@@ -118,6 +120,10 @@ namespace BorutoExpert
 
         private bool IsMatchColseBuyCondiction()
         {
+            //Console.WriteLine("------------------------TakeProfit:" + (Bid - OrderOpenPrice()));
+            //Console.WriteLine("--------------StopLoss:" + (Bid - OrderOpenPrice()));
+            //if (Bid - OrderOpenPrice() >= TakeProfit) return true;
+            //if (Bid - OrderOpenPrice() <= -StopLoss) return true;
             int power = 0;
             if (SAR > High[1]) power++;
             if (LowerBollinger >= Low[1]) power++;
@@ -129,6 +135,10 @@ namespace BorutoExpert
 
         private bool IsMatchColseSellCondiction()
         {
+            //Console.WriteLine("------------------------TakeProfit:" + (OrderOpenPrice() - Ask));
+            //Console.WriteLine("--------------StopLoss:" + (OrderOpenPrice() - Ask));
+            //if (OrderOpenPrice() - Ask >= TakeProfit) return true;
+            //if (OrderOpenPrice() - Ask <= -StopLoss) return true;
             int power = 0;
             if (SAR < Low[1]) power++;
             if (UpperBollinger <= High[1]) power++;
