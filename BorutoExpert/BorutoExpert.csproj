@@ -50,6 +50,7 @@
     <Compile Include="Strategy2.cs" />
     <Compile Include="Strategy3.cs" />
     <Compile Include="Strategy4.cs" />
+    <Compile Include="Strategy5.cs" />
     <Compile Include="Tony.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
