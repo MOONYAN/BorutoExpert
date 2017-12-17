@@ -48,7 +48,7 @@ namespace BorutoExpert
             if (IsExistBuyPosition() && IsMatchColseBuyCondiction())
             {
                 //Console.WriteLine("CloseBuyPosition");
-                CloseBuyPosition();
+                CloseBuyPosition();                
             }
 
             if (!IsExistBuyPosition() && IsMatchOpenBuyCondiction())
@@ -126,7 +126,7 @@ namespace BorutoExpert
         {
             //Console.WriteLine("------------------------TakeProfit:" + (OrderOpenPrice() - Ask));
             //Console.WriteLine("--------------StopLoss:" + (OrderOpenPrice() - Ask));
-
+            
             if (OrderOpenPrice() - Ask >= TakeProfit)
             {
                 Console.WriteLine("----OrderOpen:{0}  Ask:{1}  Profit:{2}", OrderOpenPrice(), Ask, (OrderOpenPrice() - Ask)*1000);

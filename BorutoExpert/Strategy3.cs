@@ -38,8 +38,12 @@ namespace BorutoExpert
 
         double MA120 => iMA(Symbol(), PERIOD_M30, 120, 0, MODE_SMA, PRICE_CLOSE, 1);
 
+        void PrintHour() => Console.WriteLine("H:" + Time[0].Hour);
+        void PrintMinute() => Console.WriteLine("M:" + Time[0].Minute);
+
         public override int start()
         {
+            //Console.WriteLine(Time[0].Hour);
             //Console.WriteLine("High[0]:" + High[0]);
             //Console.WriteLine("Open[0]" + Open[0]);
             //Console.WriteLine("Colse[0]" + Close[0]);
@@ -128,11 +132,13 @@ namespace BorutoExpert
 
         private void OpenBuyPosition()
         {
+            if (Time[0].Hour <7) return;
             OrderSend(Symbol(), OP_BUY, Lots, Ask, Slippage, 0, 0, "", MagicNumber, DateTime.MinValue, Color.Blue);
         }
 
         private void OpenSellPosition()
         {
+            if (Time[0].Hour <7) return;
             OrderSend(Symbol(), OP_SELL, Lots, Bid, Slippage, 0, 0, "", MagicNumber, DateTime.MinValue, Color.Red);
         }
 
