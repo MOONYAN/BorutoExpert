@@ -17,10 +17,10 @@ namespace BorutoExpert
         public int Slippage = 30;
 
         [ExternVariable]
-        public double StopLoss = 0.005;
+        public double StopLoss = 0.00500;
 
         [ExternVariable]
-        public double TakeProfit = 0;
+        public double TakeProfit = 0.01000;
 
         private int MagicNumber = 1;
 
@@ -40,6 +40,10 @@ namespace BorutoExpert
 
         void PrintHour() => Console.WriteLine("H:" + Time[0].Hour);
         void PrintMinute() => Console.WriteLine("M:" + Time[0].Minute);
+
+        bool MatchMonday => Time[0].DayOfWeek == System.DayOfWeek.Monday;
+
+        bool MatchHours => Time[0].Hour >= 7;
 
         public override int start()
         {
@@ -132,13 +136,31 @@ namespace BorutoExpert
 
         private void OpenBuyPosition()
         {
-            if (Time[0].Hour <7) return;
+            //if (MatchMonday)
+            //{
+            //    Console.WriteLine("on certain date");
+            //    return;
+            //}
+            if (!MatchHours)
+            {
+                Console.WriteLine("non match hours");
+                return;
+            }
             OrderSend(Symbol(), OP_BUY, Lots, Ask, Slippage, 0, 0, "", MagicNumber, DateTime.MinValue, Color.Blue);
         }
 
         private void OpenSellPosition()
         {
-            if (Time[0].Hour <7) return;
+            //if (MatchMonday)
+            //{
+            //    Console.WriteLine("on certain date");
+            //    return;
+            //}
+            if (!MatchHours)
+            {
+                Console.WriteLine("non match hours");
+                return;
+            }
             OrderSend(Symbol(), OP_SELL, Lots, Bid, Slippage, 0, 0, "", MagicNumber, DateTime.MinValue, Color.Red);
         }
 
