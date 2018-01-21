@@ -42,6 +42,12 @@ namespace BorutoExpert
 
         double BollingerLower => iBands(_symbol, _period, 22, 2, 0, PRICE_CLOSE, MODE_LOWER, 1);
 
+        double MAHigh => iMA(_symbol, _period, 60, 0, MODE_SMA, PRICE_HIGH, 1);
+
+        double MALow => iMA(_symbol, _period, 60, 0, MODE_SMA, PRICE_LOW, 1);
+
+        bool BetweenTimeHours => Time[0].Hour >= 8 && Time[0].Hour < 14;
+
         string _symbol;
 
         int _period;
@@ -72,7 +78,7 @@ namespace BorutoExpert
         {
             if (IsExistBuyPosition())
             {
-                if(IsMatchColseBuyCondiction())
+                if (IsMatchColseBuyCondiction())
                 {
                     //Console.WriteLine("CloseBuyPosition");
                     CloseBuyPosition();
@@ -80,7 +86,7 @@ namespace BorutoExpert
             }
             else
             {
-                if(IsMatchOpenBuyCondiction())
+                if (BetweenTimeHours && IsMatchOpenBuyCondiction())
                 {
                     //Console.WriteLine("OpenBuyPosition");
                     OpenBuyPosition();
@@ -89,15 +95,15 @@ namespace BorutoExpert
 
             if (IsExistSellPosition())
             {
-                if(IsMatchColseSellCondiction())
+                if (IsMatchColseSellCondiction())
                 {
                     //Console.WriteLine("CloseSellPosition");
                     CloseSellPosition();
-                }               
+                }
             }
             else
             {
-                if(IsMatchOpenSellCondiction())
+                if (BetweenTimeHours && IsMatchOpenSellCondiction())
                 {
                     //Console.WriteLine("OpenSellPosition");
                     OpenSellPosition();
@@ -138,7 +144,8 @@ namespace BorutoExpert
             bool isMatchSar = SARLong <= SARMid && SARMid <= SARShort && SARShort <= Close[1];
             bool isMatchMACD = MACDCloseMain > MACDMediumMain;
             bool nonBetrayMACD = MACDCloseMain > MACDMediumSignal && MACDMediumMain > MACDMediumSignal;
-            return isMatchSar && isMatchMACD && nonBetrayMACD;
+            bool isMatchMA = SARShort <= MALow;
+            return isMatchSar && isMatchMACD && nonBetrayMACD && isMatchMA;
         }
 
         private bool IsMatchOpenSellCondiction()
@@ -146,7 +153,8 @@ namespace BorutoExpert
             bool isMatchSar = SARLong >= SARMid && SARMid >= SARShort && SARShort >= Close[1];
             bool isMatchMACD = MACDCloseMain < MACDMediumMain;
             bool nonBetrayMACD = MACDCloseMain < MACDMediumSignal && MACDMediumMain < MACDMediumSignal;
-            return isMatchSar && isMatchMACD && nonBetrayMACD;
+            bool isMatchMA = SARShort >= MAHigh;
+            return isMatchSar && isMatchMACD && nonBetrayMACD && isMatchMA;
         }
 
         private bool IsMatchColseBuyCondiction()
@@ -155,6 +163,10 @@ namespace BorutoExpert
             //Console.WriteLine("--------------StopLoss:" + (Bid - OrderOpenPrice()));
             //if (Bid - OrderOpenPrice() >= TakeProfit * _factor) return true;
             //if (Bid - OrderOpenPrice() <= -StopLoss * _factor) return true;
+            if (!BetweenTimeHours && OrderProfit() >= 0)
+            {
+                return true;
+            }
             bool isMatchMACD = MACDCloseMain > MACDMediumMain;
             bool isMatchBandLower = BollingerLower >= Close[1];
             return !isMatchMACD && isMatchBandLower;
@@ -166,6 +178,10 @@ namespace BorutoExpert
             //Console.WriteLine("--------------StopLoss:" + (OrderOpenPrice() - Ask));
             //if (OrderOpenPrice() - Ask >= TakeProfit * _factor) return true;
             //if (OrderOpenPrice() - Ask <= -StopLoss * _factor) return true;
+            if (!BetweenTimeHours && OrderProfit() >= 0)
+            {
+                return true;
+            }
             bool isMatchMACD = MACDCloseMain < MACDMediumMain;
             bool isMatchBandUpper = BollingerUpper <= Close[1];
             return !isMatchMACD && isMatchBandUpper;
