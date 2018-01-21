@@ -42,6 +42,8 @@ namespace BorutoExpert
 
         double BollingerLower => iBands(_symbol, _period, 22, 2, 0, PRICE_CLOSE, MODE_LOWER, 1);
 
+        bool BetweenTimeHours => Time[0].Hour >= 8 && Time[0].Hour < 14;
+
         string _symbol;
 
         int _period;
@@ -64,7 +66,7 @@ namespace BorutoExpert
             for (int i = 0, total = OrdersTotal(); i < total; i++)
             {
                 if (!base.OrderSelect(i, SELECT_BY_POS, MODE_TRADES)) break;
-                Console.WriteLine("Magic:{0}  Symbol:{1}  Type:{2}", OrderMagicNumber(), OrderSymbol(), OrderType());
+                Console.WriteLine("Magic:{0}  Symbol:{1}  Type:{2} Profit:{3} Ticket:{4}", OrderMagicNumber(), OrderSymbol(), OrderType(), OrderProfit(), OrderTicket());
             }
         }
 
