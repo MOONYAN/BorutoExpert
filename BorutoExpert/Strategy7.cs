@@ -38,6 +38,10 @@ namespace BorutoExpert
 
         double MACDCloseSignal => iMACD(_symbol, _period, 12, 26, 9, PRICE_CLOSE, MODE_SIGNAL, 1);
 
+        double BollingerUpper => iBands(_symbol, _period, 22, 2, 0, PRICE_CLOSE, MODE_UPPER, 1);
+
+        double BollingerLower => iBands(_symbol, _period, 22, 2, 0, PRICE_CLOSE, MODE_LOWER, 1);
+
         string _symbol;
 
         int _period;
@@ -142,7 +146,8 @@ namespace BorutoExpert
             //if (Bid - OrderOpenPrice() >= TakeProfit * _factor) return true;
             //if (Bid - OrderOpenPrice() <= -StopLoss * _factor) return true;
             bool isMatchMACD = MACDCloseMain > MACDMediumMain;
-            return !isMatchMACD;
+            bool isMatchBandLower = BollingerLower >= Close[1];
+            return !isMatchMACD && isMatchBandLower;
         }
 
         private bool IsMatchColseSellCondiction()
@@ -152,7 +157,8 @@ namespace BorutoExpert
             //if (OrderOpenPrice() - Ask >= TakeProfit * _factor) return true;
             //if (OrderOpenPrice() - Ask <= -StopLoss * _factor) return true;
             bool isMatchMACD = MACDCloseMain < MACDMediumMain;
-            return !isMatchMACD;
+            bool isMatchBandUpper = BollingerUpper <= Close[1];
+            return !isMatchMACD && isMatchBandUpper;
         }
 
         private void OpenBuyPosition()
