@@ -72,28 +72,38 @@ namespace BorutoExpert
 
         public override int start()
         {
-            if (IsExistBuyPosition() && IsMatchColseBuyCondiction())
+            if (IsExistBuyPosition())
             {
-                //Console.WriteLine("CloseBuyPosition");
-                CloseBuyPosition();
+                if(IsMatchColseBuyCondiction())
+                {
+                    //Console.WriteLine("CloseBuyPosition");
+                    CloseBuyPosition();
+                }
+            }
+            else
+            {
+                if(IsMatchOpenBuyCondiction())
+                {
+                    //Console.WriteLine("OpenBuyPosition");
+                    OpenBuyPosition();
+                }
             }
 
-            if (!IsExistBuyPosition() && IsMatchOpenBuyCondiction())
+            if (IsExistSellPosition())
             {
-                //Console.WriteLine("OpenBuyPosition");
-                OpenBuyPosition();
+                if(IsMatchColseSellCondiction())
+                {
+                    //Console.WriteLine("CloseSellPosition");
+                    CloseSellPosition();
+                }               
             }
-
-            if (IsExistSellPosition() && IsMatchColseSellCondiction())
+            else
             {
-                //Console.WriteLine("CloseSellPosition");
-                CloseSellPosition();
-            }
-
-            if (!IsExistSellPosition() && IsMatchOpenSellCondiction())
-            {
-                //Console.WriteLine("OpenSellPosition");
-                OpenSellPosition();
+                if(IsMatchOpenSellCondiction())
+                {
+                    //Console.WriteLine("OpenSellPosition");
+                    OpenSellPosition();
+                }
             }
 
             return base.start();
@@ -175,26 +185,12 @@ namespace BorutoExpert
 
         private void CloseBuyPosition()
         {
-            for (int i = 0, total = OrdersTotal(); i < total; i++)
-            {
-                if (!OrderSelect(i, SELECT_BY_POS, MODE_TRADES)) break;
-                if (OrderMagicNumber() == MagicNumber && OrderSymbol() == Symbol() && OrderType() == OP_BUY)
-                {
-                    OrderClose(OrderTicket(), OrderLots(), Bid, Slippage, Color.White);
-                }
-            }
+            OrderClose(OrderTicket(), OrderLots(), Bid, Slippage, Color.White);
         }
 
         private void CloseSellPosition()
         {
-            for (int i = 0, total = OrdersTotal(); i < total; i++)
-            {
-                if (!OrderSelect(i, SELECT_BY_POS, MODE_TRADES)) break;
-                if (OrderMagicNumber() == MagicNumber && OrderSymbol() == Symbol() && OrderType() == OP_SELL)
-                {
-                    OrderClose(OrderTicket(), OrderLots(), Ask, Slippage, Color.White);
-                }
-            }
+            OrderClose(OrderTicket(), OrderLots(), Ask, Slippage, Color.White);
         }
 
         public override int deinit()
