@@ -22,15 +22,27 @@ namespace BorutoExpert
         [ExternVariable]
         public bool IsMatchSellPrecondiction = false;
 
+        [ExternVariable]
+        public int MFIAgilePeriod = 9;
+
+        [ExternVariable]
+        public int MFISmoothPeriod = 14;
+
+        [ExternVariable]
+        double UpperThreshold = 75;
+
+        [ExternVariable]
+        double LowerThreshold = 25;
+
         private int MagicNumber = 1;
 
-        double MFIAgile => iMFI(_symbol, _period, 9, 1);
+        double MFIAgile => iMFI(_symbol, _period, MFIAgilePeriod, 1);
 
-        double MFIAgileFormer => iMFI(_symbol, _period, 9, 2);
+        double MFIAgileFormer => iMFI(_symbol, _period, MFIAgilePeriod, 2);
 
-        double MFISmoose => iMFI(_symbol, _period, 14, 1);
+        double MFISmooth => iMFI(_symbol, _period, MFISmoothPeriod, 1);
 
-        double MFISmooseFormer => iMFI(_symbol, _period, 14, 2);
+        double MFISmoothFormer => iMFI(_symbol, _period, MFISmoothPeriod, 2);
 
         string _symbol;
 
@@ -102,13 +114,13 @@ namespace BorutoExpert
         {
             if (!IsMatchBuyPrecondiction)
             {
-                bool matchBuy = MFIAgile > 75 && MFISmoose > 75;
+                bool matchBuy = MFIAgile > UpperThreshold && MFISmooth > UpperThreshold;
                 IsMatchBuyPrecondiction = matchBuy;
                 IsMatchSellPrecondiction = !matchBuy;
             }
             if (!IsMatchSellPrecondiction)
             {
-                bool matchSell = MFIAgile < 25 && MFISmoose < 25;
+                bool matchSell = MFIAgile < LowerThreshold && MFISmooth < LowerThreshold;
                 IsMatchBuyPrecondiction = !matchSell;
                 IsMatchSellPrecondiction = matchSell;
             }
@@ -145,9 +157,9 @@ namespace BorutoExpert
             if (IsMatchBuyPrecondiction)
             {
                 bool isAgileInRange = 45 <= MFIAgile && MFIAgile <= 55;
-                bool isSmooseInRange = 45 <= MFISmoose && MFISmoose <= 55;
-                bool isMatchGold = MFIAgileFormer < MFISmooseFormer && MFIAgile > MFISmoose;
-                return isAgileInRange && isSmooseInRange && isMatchGold;
+                bool isSmoothInRange = 45 <= MFISmooth && MFISmooth <= 55;
+                bool isMatchGold = MFIAgileFormer < MFISmoothFormer && MFIAgile > MFISmooth;
+                return isAgileInRange && isSmoothInRange && isMatchGold;
             }
             return false;
         }
@@ -157,21 +169,21 @@ namespace BorutoExpert
             if (IsMatchSellPrecondiction)
             {
                 bool isAgileInRange = 45 <= MFIAgile && MFIAgile <= 55;
-                bool isSmooseInRange = 45 <= MFISmoose && MFISmoose <= 55;
-                bool isMatchDead = MFIAgileFormer > MFISmooseFormer && MFIAgile < MFISmoose;
-                return isAgileInRange && isSmooseInRange && isMatchDead;
+                bool isSmoothInRange = 45 <= MFISmooth && MFISmooth <= 55;
+                bool isMatchDead = MFIAgileFormer > MFISmoothFormer && MFIAgile < MFISmooth;
+                return isAgileInRange && isSmoothInRange && isMatchDead;
             }
             return false;
         }
 
         private bool IsMatchColseBuyCondiction()
         {
-            return MFIAgile > 75 && MFISmoose > 75;
+            return MFIAgile > UpperThreshold && MFISmooth > UpperThreshold;
         }
 
         private bool IsMatchColseSellCondiction()
         {
-            return MFIAgile < 25 && MFISmoose < 25;
+            return MFIAgile < LowerThreshold && MFISmooth < LowerThreshold;
         }
 
         private void OpenBuyPosition()
