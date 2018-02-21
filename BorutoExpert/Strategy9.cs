@@ -48,9 +48,13 @@ namespace BorutoExpert
 
         double MAShortFormer => iMA(_symbol, _period, 30, 0, MODE_EMA, PRICE_CLOSE, 1);
 
-        double BollingerUpper => iBands(_symbol, _period, 22, 2, 0, PRICE_CLOSE, MODE_UPPER, 1);
+        double BollingerUpper => iBands(_symbol, _period, 22, 2, 0, PRICE_CLOSE, MODE_UPPER, 0);
 
-        double BollingerLower => iBands(_symbol, _period, 22, 2, 0, PRICE_CLOSE, MODE_LOWER, 1);
+        double BollingerLower => iBands(_symbol, _period, 22, 2, 0, PRICE_CLOSE, MODE_LOWER, 0);
+
+        double BollingerMain => iBands(_symbol, _period, 22, 2, 0, PRICE_CLOSE, MODE_MAIN, 0);
+
+        double OSMA => iOsMA(_symbol, _period, 20, 30, 10, PRICE_CLOSE, 0);
 
         string _symbol;
 
@@ -66,6 +70,7 @@ namespace BorutoExpert
             Console.WriteLine("OnInit");
             Console.WriteLine("Symbol:{0}  Factor:{1}  Period:{2}", _symbol, _factor, _period);
             ReportPosition();
+            Alert(_symbol +"on init");
             return base.init();
         }
 
@@ -145,34 +150,34 @@ namespace BorutoExpert
 
         private bool IsMatchOpenBuyCondiction()
         {
-            bool isLastSarUp = SARLongFormer >= Open[1] && SARMidFormer >= Open[1] && SARShort >= Open[1];
-            bool isCurrentSarDown = SARLong <= Open[0] && SARMid <= Open[0] && SARShort <= Open[0];
-            bool isMatchMA1 = MAShort > MAMid && MAShortFormer <= MAMidFormer;
-            bool isMatchMA2 = MAMid > MALong && MAMidFormer <= MALongFormer;
-            return isLastSarUp && isCurrentSarDown && isMatchMA1 || isCurrentSarDown && isMatchMA2;
+            //bool isLastSarUp = SARLongFormer >= Open[1] && SARMidFormer >= Open[1] && SARShort >= Open[1];
+            //bool isCurrentSarDown = SARLong <= Open[0] && SARMid <= Open[0] && SARShort <= Open[0];
+            //bool isMatchMA1 = MAShort > MAMid && MAShortFormer <= MAMidFormer;
+            //bool isMatchMA2 = MAMid > MALong && MAMidFormer <= MALongFormer;
+            bool isMatchOSMA = OSMA > 0;
+            bool isMatchBollin = Close[0] > BollingerMain;
+            return isMatchOSMA && isMatchBollin;
         }
 
         private bool IsMatchOpenSellCondiction()
         {
-            bool isLastSarDown = SARLongFormer <= Open[1] && SARMidFormer <= Open[1] && SARShort <= Open[1];
-            bool isCurrentSarDown = SARLong >= Open[0] && SARMid >= Open[0] && SARShort >= Open[0];
-            bool isMatchMA1 = MAShort < MAMid && MAShortFormer >= MAMidFormer;
-            bool isMatchMA2 = MAMid < MALong && MAMidFormer >= MALongFormer;
-            return isLastSarDown && isCurrentSarDown && isMatchMA1 || isCurrentSarDown && isMatchMA2;
+            //bool isLastSarDown = SARLongFormer <= Open[1] && SARMidFormer <= Open[1] && SARShort <= Open[1];
+            //bool isCurrentSarDown = SARLong >= Open[0] && SARMid >= Open[0] && SARShort >= Open[0];
+            //bool isMatchMA1 = MAShort < MAMid && MAShortFormer >= MAMidFormer;
+            //bool isMatchMA2 = MAMid < MALong && MAMidFormer >= MALongFormer;
+            bool isMatchOSMA = OSMA < 0;
+            bool isMatchBollin = Close[0] < BollingerMain;
+            return isMatchOSMA && isMatchBollin;
         }
 
         private bool IsMatchColseBuyCondiction()
         {
-            bool isMatchSar = SARMid >= Open[0];
-            bool isMatchMA = High[0] >= MALong && Low[0] <= MALong;
-            return isMatchSar || isMatchMA;
+            return false;
         }
 
         private bool IsMatchColseSellCondiction()
         {
-            bool isMatchSar = SARMid <= Open[0];
-            bool isMatchMA = High[0] >= MALong && Low[0] <= MALong;
-            return isMatchSar || isMatchMA;
+            return false;
         }
 
         private void OpenBuyPosition()
