@@ -47,6 +47,7 @@
     <Compile Include="BGI1.cs" />
     <Compile Include="BGI2.cs" />
     <Compile Include="Strategy1.cs" />
+    <Compile Include="Strategy10.cs" />
     <Compile Include="Strategy2.cs" />
     <Compile Include="Strategy3.cs" />
     <Compile Include="Strategy4.cs" />
